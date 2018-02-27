@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.2",
+    "fs-extra": "^5.0.0",
+    "fs-path": "0.0.24",
     "google-trends-api": "^4.5.0",
     "json2csv": "^3.11.5",
     "method-override": "^2.3.10"
