@@ -1,19 +1,18 @@
 'use strict';
 //dependencies
 const fs = require('fs');
-const fsPath = require('fs-path');
 const json2csv = require('json2csv');
+const StringBuilder = require('string-builder');
 const fileManagerConstants = require('./file-manager-constants');
-
 
 module.exports = {
     createAndDownloadFile: async function (csv, directory, fileName, query) {
-        let path =  fileManagerConstants.DOWNLOADS_ROOT + query + directory;
-        console.log(path);
-        let newFileName = "";
-        // this.checkDirectory(fileManagerConstants.DOWNLOADS_ROOT);
-        // this.checkDirectory(fileManagerConstants.DOWNLOADS_ROOT + query);
-        // this.checkDirectory(path);
+        let sb = new StringBuilder();
+        sb.append(fileManagerConstants.DOWNLOADS_ROOT);
+        sb.append(query);
+        sb.append(directory);
+        let path = fileManagerConstants.DOWNLOADS_ROOT + query + directory;
+        this.checkDirectory(sb.toString());
 
         await fs.readdir(path, (err, files) => {
             let numberOfFiles;
@@ -24,19 +23,22 @@ module.exports = {
             }
 
             let newNumber = numberOfFiles + 1;
-            newFileName = fileName + newNumber.toString() + '.csv';
+            sb.append(fileName);
+            sb.append(newNumber.toString());
+            sb.append(fileManagerConstants.CSV);
+            console.log(sb.toString());
+
+            fs.writeFile(sb.toString(), csv, function (err) {
+                if (err) {
+                    console.log(newFileName);
+                    console.log(err);
+                    throw err;
+                } else {
+                    console.log('File was downloaded to ' + path);
+                }
             });
-        console.log(newFileName);
-        let fullPath = path + newFileName.toString();
-        fs.writeFile('./downloads/bitcoin/analytics/analytics4.csv', csv, function (err) {
-            if (err) {
-                console.log(newFileName);
-                console.log(err);
-                throw err;
-            } else {
-                console.log('File was downloaded to ' + path);
-            }
         });
+
 
     },
 
@@ -50,14 +52,14 @@ module.exports = {
         return csv;
     },
 
-    checkDirectory : function (directory) {
-            try {
-                fs.statSync(directory);
-                console.log("dir already exist:" + directory);
-            } catch(e) {
-                fs.mkdirSync(directory);
-                console.log("dir created:" + directory);
-            }
+    checkDirectory: function (directory) {
+        try {
+            fs.statSync(directory);
+            console.log("dir already exist:" + directory);
+        } catch (e) {
+            fs.mkdirSync(directory);
+            console.log("dir created:" + directory);
         }
+    }
 
 };

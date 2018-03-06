@@ -1,6 +1,6 @@
 module.exports = Object.freeze({
 //name of directories
-    DOWNLOADS_ROOT:'./downloads/',
+    DOWNLOADS_ROOT: './downloads/',
     ANALYTICS: '/analytics',
     RELATED: '/related/',
     RELATED_TRENDS: '/relatedTrends/',
@@ -11,4 +11,4 @@ module.exports = Object.freeze({
     RELATED_TRENDS_CSV: 'relatedTrendsCSV',
 
     CSV: '.csv'
-    });
+});

@@ -42,16 +42,22 @@ function getAnalyticsData(query) {
                         let tempObject = new DataObject(dataArray[i].formattedTime, dataArray[i].value);
                         dataObjects.push(tempObject);
                     }
-                    let csv = fileManager.createCSV(fieldsForAnalyticsData, dataObjects);
-                    fileManager.createAndDownloadFile(csv, fileManagerConstants.ANALYTICS,
-                                                            fileManagerConstants.ANALYTICS_CSV, query).catch();
+                    fileManager.createCSV(fieldsForAnalyticsData, dataObjects)
+                        .then(result => {
+                            fileManager.createAndDownloadFile(result, fileManagerConstants.ANALYTICS,
+                                fileManagerConstants.ANALYTICS_CSV, query).catch(
+                                error => {
+                                    console.log(error);
+                                }
+                            );
+                        });
+
                 }
-
-
             });
         }, 10000);
     });
 }
+
 
 function DataObject(time, popularity) {
     this.time = time;
