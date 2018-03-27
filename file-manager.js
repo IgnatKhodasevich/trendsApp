@@ -1,6 +1,7 @@
 'use strict';
 //dependencies
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 const json2csv = require('json2csv');
 const StringBuilder = require('string-builder');
 const fileManagerConstants = require('./file-manager-constants');
@@ -9,10 +10,13 @@ module.exports = {
     createAndDownloadFile: async function (csv, directory, fileName, query) {
         let sb = new StringBuilder();
         sb.append(fileManagerConstants.DOWNLOADS_ROOT);
-        sb.append(query);
-        sb.append(directory);
-        let path = fileManagerConstants.DOWNLOADS_ROOT + query + directory;
         this.checkDirectory(sb.toString());
+        sb.append(query);
+        this.checkDirectory(sb.toString());
+        sb.append(directory);
+        this.checkDirectory(sb.toString());
+        let path = fileManagerConstants.DOWNLOADS_ROOT + query + directory;
+        this.checkDirectory(path);
 
         await fs.readdir(path, (err, files) => {
             let numberOfFiles;
@@ -30,7 +34,7 @@ module.exports = {
 
             fs.writeFile(sb.toString(), csv, function (err) {
                 if (err) {
-                    console.log(newFileName);
+                    console.log(sb.toString());
                     console.log(err);
                     throw err;
                 } else {
@@ -53,13 +57,20 @@ module.exports = {
     },
 
     checkDirectory: function (directory) {
-        try {
-            fs.statSync(directory);
+
+        if (fs.exists(directory)) {
             console.log("dir already exist:" + directory);
-        } catch (e) {
-            fs.mkdirSync(directory);
-            console.log("dir created:" + directory);
+        } else {
+            mkdirp.mkdirP(directory, function (e) {
+                if (e) {
+                    console.error(e);
+                }
+                else {
+                    console.log("dir created:" + directory);
+                }
+            });
+
+
         }
     }
-
 };
