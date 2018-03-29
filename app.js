@@ -5,9 +5,32 @@ const fileManager = require('./file-manager');
 const fileManagerConstants = require('./file-manager-constants');
 let googleTrends = require('./node_modules/google-trends-api/lib/google-trends-api.min.js');
 
-const axios = require('axios');
 const port = 3000;
 const app = express();
+const path = require('path');
+const bodyParser = require('body-parser');
+
+let index = require('./routes/index');
+let tasks = require('./routes/tasks');
+
+//View Engine
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+
+// Set Static Folder
+app.use(express.static(path.join(__dirname, 'client')));
+
+// Body Parser MW
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+app.use('/', index);
+app.use('/', tasks);
+
+app.listen(port, function(){
+    console.log('Server started on port ' + port);
+});
 
 let query = 'bitcoin';
 let dataObjects = [];
@@ -16,10 +39,13 @@ let frequency = 1;
 
 //field constants for csv files
 const fieldsForAnalyticsData = ['time', 'popularity'];
+const fieldsForRelatedData = ['dateStart', 'dateEnd', 'query', 'value'];
+const fieldsForTrendData = ['dateStart', 'dateEnd', 'query', 'trend'];
 const hourInMillis = 3600000;
 
 
-getAnalyticsData(query).catch();
+//getAnalyticsData(query).catch();
+//getRelatedData(query);
 
 
 /**
@@ -57,6 +83,29 @@ function getAnalyticsData(query) {
             });
         }, hourInMillis);
     });
+}
+
+function getRelatedData(query) {
+    return new Promise(function (resolve, reject) {
+        setInterval(function () {
+            googleTrends.relatedQueries({
+                keyword: query,
+                startTime:new Date(Date.now() - (frequency * 60 * 60 * 1000)),
+                granularTimeResolution: true
+            },function (err, results) {
+                if (err) {
+                    console.error(err.toString());
+                } else {
+                    results = JSON.parse(results);
+                    let relatedData = results.default.rankedList[0];
+                    console.log(new Date(Date.now()));
+                    console.dir(relatedData, {depth: null, colors: true});
+
+                }
+            })
+        }, 10000)
+    })
+    
 }
 
 async function getAnalyticsPerDay(query, startDay, endDay, withGranular) {
