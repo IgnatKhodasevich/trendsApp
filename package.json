@@ -11,6 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "body-parser": "latest",
+    "dynamodb-doc": "^1.0.0",
+    "ejs": "latest",
     "express": "^4.16.2",
     "fs-extra": "^5.0.0",
     "fs-path": "0.0.24",
@@ -19,8 +22,6 @@
     "method-override": "^2.3.10",
     "mkdirp": "^0.5.1",
     "moment": "^2.21.0",
-    "string-builder": "^0.1.4",
-    "body-parser": "latest",
-    "ejs": "latest"
+    "string-builder": "^0.1.4"
   }
 }

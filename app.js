@@ -44,8 +44,6 @@ const fieldsForTrendData = ['dateStart', 'dateEnd', 'query', 'trend'];
 const hourInMillis = 3600000;
 
 
-//getAnalyticsData(query).catch();
-//getRelatedData(query);
 
 
 /**
@@ -105,7 +103,7 @@ function getRelatedData(query) {
             })
         }, 10000)
     })
-    
+
 }
 
 async function getAnalyticsPerDay(query, startDay, endDay, withGranular) {
